@@ -2,3 +2,17 @@ body {
 	display: grid;
 	grid-template-columns: 2fr 8fr
 }
+
+#list > li:hover {
+	cursor: pointer;
+	display: inline-block;
+}
+
+.user-list {
+	display: flex;
+	font-weight: bold;
+}
+
+.user-list p:not(:last-of-type) {
+	margin-right: 10px;
+}
