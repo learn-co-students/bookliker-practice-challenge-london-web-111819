@@ -1,8 +1,9 @@
-//glibal variables
+//global variables
 const baseUrl = 'http://localhost:3000/books/'
 const bookList= document.querySelector("[id='list']")
 const showPanel = document.querySelector("[id='show-panel']")
 const usersList = document.createElement("ul")
+const currentUser = {"id":1, "username":"pouros"}
 
 //requests 
 
@@ -42,7 +43,12 @@ function showBook(book){
     usersList.innerText = "" 
     book.users.forEach(renderUsers)
     let readButton = document.createElement("button")
-    readButton.innerText = 'Read Book'
+    if (hasTheUsersReadTheBook(book.users)){
+        readButton.innerText = 'Unlike Book'
+    }else{
+        readButton.innerText = 'Like Book'
+    }
+    
     readButton.addEventListener('click', () => updateBookUsers(book))
     showPanel.append(h1, img, p, usersList, readButton)
 }
@@ -59,18 +65,28 @@ function getAllBooks(){
     )
 }
 
-function updateBookUsers(book){
-    event.preventDefault()
+function updateBookUsers(book,){
     let listUsers = book.users
-    listUsers.push({"id":1, "username":"pouros"})
-    bodyOject = {
-        users: listUsers
-    }
-    patch(baseUrl, book.id, bodyOject)
-    .then((book) => showBook(book))
+    if(hasTheUsersReadTheBook(listUsers)){
+        bodyOject = {
+            users: listUsers.filter(user => user.id !== currentUser.id)
+        }
+        patch(baseUrl, book.id, bodyOject,)
+        .then((book) => showBook(book))
+    }else{
+        listUsers.push(currentUser)
 
+        bodyOject = {
+            users: listUsers
+        }
+        patch(baseUrl, book.id, bodyOject)
+        .then((book) => showBook(book))
+    } 
 }
 
+function hasTheUsersReadTheBook(listUsers){
+    return listUsers.find(user => user.id === currentUser.id)
+}
 
 
 document.addEventListener("DOMContentLoaded", function() {
